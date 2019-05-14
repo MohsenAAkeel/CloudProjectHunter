@@ -160,16 +160,16 @@ def kill_job(job_num, job_list, job_queue, job_timers, send_queue, vm_list):
 
 def main():
     # path is the directory where new jobs are sent
-    job_path = r'C:\Users\mohse\Desktop\Cloud Computing\lab4\test folder\job_folder'
-    user_path = r'C:\Users\mohse\Desktop\Cloud Computing\lab4\test folder\user_ui'
-    admin_path = r'C:\Users\mohse\Desktop\Cloud Computing\lab4\test folder\admin_ui'
+    job_path = 'need path\job_folder'
+    user_path = 'need path\user_ui'
+    admin_path = 'need path\admin_ui'
     job_list = []
     job_queue = []
     send_queue = []
     job_timers = JobTimer()
     job_number = 0
     comment = ''
-    host_domain = ''
+    host_domain = 'need host domain'
     pass_test = False
 
     vm_list = {'VM1':['host name', 'port', 'CPU cap', 'Mem cap', 'Net cap', 'avail cpu', 'avail mem', 'avail net', 'SSpec'],
