@@ -16,7 +16,7 @@ def read_job(file_name, path):
     return data
 
 
-# assign a new job to a a vm, returns a tuple (success, job_num, [VM#, CPU alloc, Mem alloc, Net alloc, SSpec])
+# assign a new job to a a vm, returns a tuple (success, [VM#, job num, CPU alloc, Mem alloc, Net alloc, Sec transfer, runtime, source domain])
 def assign_job(obj_vm_list, obj_job, job_num, alpha=0):
     # Incemental reduction factor reached 1 i.e. assignment not possible
     if alpha >= 100:
@@ -67,11 +67,11 @@ def assign_job(obj_vm_list, obj_job, job_num, alpha=0):
          # Assignment successful. Return tuple: {1 i.e. successful, [VM#, job_num, CPU alloc, Mem alloc, sec_tramsfer}
         else:
             if Benefit_vm1 == max(Benefit_vm1, Benefit_vm2, Benefit_vm3):
-                return (1, ['domaina', job_num, float(obj_job['max_cpu']) - alpha, float(obj_job['max_mem']) - alpha, obj_job['sec_transfer']])
+                return (1, ['domaina', job_num, float(obj_job['max_cpu']) - alpha, float(obj_job['max_mem']) - alpha, obj_job['sec_transfer'], obj_job["runtime"], obj_job["source"]])
             if Benefit_vm2 == max(Benefit_vm1, Benefit_vm2, Benefit_vm3):
-                return (1, ['domainb', job_num, float(obj_job['max_cpu']) - alpha, float(obj_job['max_mem']) - alpha], obj_job['sec_transfer'])
+                return (1, ['domainb', job_num, float(obj_job['max_cpu']) - alpha, float(obj_job['max_mem']) - alpha, obj_job['sec_transfer'], obj_job["runtime"], obj_job["source"]])
             else:
-                return (1, ['domainc', job_num, float(obj_job['max_cpu']) - alpha, float(obj_job['max_mem']) - alpha], obj_job['sec_transfer'])
+                return (1, ['domainc', job_num, float(obj_job['max_cpu']) - alpha, float(obj_job['max_mem']) - alpha, obj_job['sec_transfer'], obj_job["runtime"], obj_job["source"]])
 
 
 # send a job to an assigned vm
@@ -123,6 +123,7 @@ def check_admin_requests(path):
         path_to_file = os.path.join(path, filename)
         with open(path_to_file, 'r') as file:
             tmp = list(file)
+        os.remove(path_to_file)
         for x in tmp:
             kill_jobs.append(x)
     return kill_jobs
@@ -203,9 +204,9 @@ def main():
         # CHECK FOR JOBS IN THE SEND QUEUE AND SEND THEM #######################
         if len(send_queue) > 0:
             for x in send_queue:
-                if send_job(x, vm_list, host_domain):
+                if send_job(x, vm_list, x[7]):
                     job_list.append(x)
-                    job_timers.add_job(x[0], x[1])
+                    job_timers.add_job(x[1], int(x[6]))
                     send_queue.remove(x)
 
         # CHECK FOR JOBS IN QUEUE, OTHERWISE CHECK FOR A NEW JOB ###############
@@ -231,9 +232,9 @@ def main():
                 vm_list = update_vm_list(vm_list, assigned_job, "sub")
                 #
                 if len(send_queue) == 0:
-                    if send_job(assigned_job, vm_list, host_domain):
+                    if send_job(assigned_job, vm_list, assigned_job[7]):
                         job_list.append(assigned_job)
-                        job_timers.add_job(assigned_job[1], 1)
+                        job_timers.add_job(assigned_job[1], int(assigned_job[6]))
                     else:
                         send_queue.append(assigned_job)
                         pass_test = 0
