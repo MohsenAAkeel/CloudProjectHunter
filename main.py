@@ -157,10 +157,10 @@ def kill_job(job_num, job_list, job_queue, job_timers, send_queue, vm_list):
 
 def main():
     # path is the directory where new jobs are sent
-    job_path = r'\vars\wwww\html\job_path'
-    user_path = r'\vars\wwww\html\ui_data'
-    admin_req_path = r'\vars\wwww\html\admin_req'
-    admin_ui_path = r'\vars\wwww\html\ui_data'
+    job_path = r'\vars\www\html\job_path'
+    user_path = r'\vars\www\html\ui_data'
+    admin_req_path = r'\vars\www\html\admin_req'
+    admin_ui_path = r'\vars\www\html\ui_data'
     job_list = []
     job_queue = []
     send_queue = []
