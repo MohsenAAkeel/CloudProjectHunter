@@ -6,7 +6,6 @@ class JobTimer:
 
     def add_job(self, job_number, job_runtime):
         self.jobs.append([job_number, int(job_runtime)*60, time.time()])
-        print(int(job_runtime) * 60)
 
     def remove_job(self, job_num):
         for x in self.jobs:
@@ -22,5 +21,4 @@ class JobTimer:
 
             if int(time_diff) >= int(x[1]):  # check if runtime is met
                 finished_jobs.append(x[0])
-        print("fin job: ", finished_jobs)
         return finished_jobs
