@@ -79,7 +79,7 @@ def send_job(assigned_job, vm_list, source):
     destination = vm_list[vm][0]
 
     #comman = "sudo ./sendt job_number source destination sec_transfer"
-    command = "sudo ./sendt " + assigned_job[1] + str(source) + ' ' + str(destination) + ' ' + str(assigned_job[5])
+    command = "sudo ./sendt " + assigned_job[1] + str(source) + ' ' + str(destination) + ' ' + str(assigned_job[4])
     process = subprocess.Popen(command.split(), stdout=subprocess.PIPE)
     output, error = process.communicate()
 
