@@ -19,5 +19,5 @@ class JobTimer:
         for x in self.jobs:
             time_diff = time.time() - x[2]
             if time_diff >= x[1]:  # check if runtime is met
-                finished_jobs.append(int(x[0]))
+                finished_jobs.append(x[1])
         return finished_jobs
