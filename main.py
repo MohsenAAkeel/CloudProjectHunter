@@ -64,7 +64,7 @@ def assign_job(obj_vm_list, obj_job, job_num, alpha=0):
             return assign_job(obj_vm_list, obj_job, alpha + 0.5)
 
          # (success, job_num, [VM  # , CPU alloc, Mem alloc, Net alloc, SSpec])
-         # Assignment successful. Return tuple: {1 i.e. successful, [VM#, job_num, CPU alloc, Mem alloc, sec_tramsfer}
+         # Assignment successful. Return tuple: (1 i.e. successful, [VM#, job num, CPU alloc, Mem alloc, Sec transfer, runtime, source domain])
         else:
             if Benefit_vm1 == max(Benefit_vm1, Benefit_vm2, Benefit_vm3):
                 return (1, ['domaina', job_num, float(obj_job['max_cpu']) - alpha, float(obj_job['max_mem']) - alpha, obj_job['sec_transfer'], obj_job["runtime"], obj_job["source"]])
