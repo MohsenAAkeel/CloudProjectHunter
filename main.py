@@ -171,9 +171,9 @@ def main():
     pass_test = 0
 
 # 'VM1':['host name', 'port', 'CPU cap', 'Mem cap', 'Net cap', 'avail cpu', 'avail mem', 'avail net', 'SSpec']
-    vm_list = {'domaina': ['host name', 'port', '10', '10', '10', '10', '10', '10', '1'],
-               'domainb': ['host name', 'port', '10', '10', '10', '10', '10', '10', '1'],
-               'domainc': ['host name', 'port', '10', '10', '10', '10', '10', '10', '1']}
+    vm_list = {'domaina': ['host name', 'port', '64', '180', '10', '64', '180', '10', '3'],
+               'domainb': ['host name', 'port', '128', '240', '10', '128', '240', '10', '2'],
+               'domainc': ['host name', 'port', '64', '160', '10', '64', '160', '10', '1']}
 
     # collect the files that already exist in this dir
     job_file_list = os.listdir(job_path)
