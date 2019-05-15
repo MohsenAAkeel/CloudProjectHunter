@@ -16,7 +16,7 @@ def read_job(file_name, path):
     return data
 
 
-# assign a new job to a a vm, returns a tuple (success, [VM#, job num, CPU alloc, Mem alloc, Net alloc, Sec transfer, runtime, source domain])
+# assign a new job to a a vm, returns a tuple (success, [VM#, job num, CPU alloc, Mem alloc, Sec transfer, runtime, source domain])
 def assign_job(obj_vm_list, obj_job, job_num, alpha=0):
     # Incemental reduction factor reached 1 i.e. assignment not possible
     if alpha >= 100:
@@ -204,9 +204,9 @@ def main():
         # CHECK FOR JOBS IN THE SEND QUEUE AND SEND THEM #######################
         if len(send_queue) > 0:
             for x in send_queue:
-                if send_job(x, vm_list, x[7]):
+                if send_job(x, vm_list, x[6]):
                     job_list.append(x)
-                    job_timers.add_job(x[1], int(x[6]))
+                    job_timers.add_job(x[1], int(x[5]))
                     send_queue.remove(x)
 
         # CHECK FOR JOBS IN QUEUE, OTHERWISE CHECK FOR A NEW JOB ###############
@@ -232,9 +232,9 @@ def main():
                 vm_list = update_vm_list(vm_list, assigned_job, "sub")
                 #
                 if len(send_queue) == 0:
-                    if send_job(assigned_job, vm_list, assigned_job[7]):
+                    if send_job(assigned_job, vm_list, assigned_job[6]):
                         job_list.append(assigned_job)
-                        job_timers.add_job(assigned_job[1], int(assigned_job[6]))
+                        job_timers.add_job(assigned_job[1], int(assigned_job[5]))
                     else:
                         send_queue.append(assigned_job)
                         pass_test = 0
