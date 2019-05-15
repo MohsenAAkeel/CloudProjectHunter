@@ -20,9 +20,7 @@ class JobTimer:
         for x in self.jobs:
             time_diff = time.time() - x[2]
 
-            print('time: ', time_diff)
-            print(int(time_diff) >= int(x[1]/10))
-            if int(time_diff) >= int(x[1]/10):  # check if runtime is met
+            if int(time_diff) >= int(x[1]):  # check if runtime is met
                 finished_jobs.append(x[0])
         print("fin job: ", finished_jobs)
         return finished_jobs
