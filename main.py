@@ -19,8 +19,8 @@ def read_job(file_name, path):
 # assign a new job to a a vm, returns a tuple (success, job_num, [VM#, CPU alloc, Mem alloc, Net alloc, SSpec])
 def assign_job(obj_vm_list, obj_job, job_num, alpha=0):
     # Incemental reduction factor reached 1 i.e. assignment not possible
-    if alpha >= 1:
-        return (0, -1, -1, -1, -1)
+    if alpha >= 100:
+        return (0, -1, -1, -1)
 
     # Assignment may be possible. Assign to VM with highest net benefit
     else:
@@ -33,68 +33,57 @@ def assign_job(obj_vm_list, obj_job, job_num, alpha=0):
         vm3_specs = obj_vm_list.get('VM3')
 
         # Calculate VM 1 benefit if all constraints are met
-        if (float(vm1_specs[5]) - float(obj_job['CPU max']) + alpha >= 0) and (
-                float(vm1_specs[6]) - float(obj_job['Mem max']) + alpha >= 0) and (
-                float(vm1_specs[7]) - float(obj_job['Net max']) + alpha >= 0) and (
-                float(obj_job['SSpec']) <= float(vm1_specs[8])) and (
-                float(obj_job['CPU max']) - alpha >= float(obj_job['CPU min'])) and (
-                float(obj_job['Mem max']) - alpha >= float(obj_job['Mem min'])) and (
-                float(obj_job['Net max']) - alpha >= float(obj_job['Net min'])):
-            Benefit_vm1 = (float(vm1_specs[5]) - float(obj_job['CPU max']) + alpha) + (
-                        float(vm1_specs[6]) - float(obj_job['Mem max']) + alpha) + (
-                                      float(vm1_specs[7]) - float(obj_job['Net max']) + alpha)
+        if (float(vm1_specs[4]) - float(obj_job['max_cpu']) + alpha >= 0) and (
+                float(vm1_specs[5]) - float(obj_job['max_mem']) + alpha >= 0) and (
+                float(obj_job['sec_level']) <= float(vm1_specs[6])) and (
+                float(obj_job['max_cpu']) - alpha >= float(obj_job['min_cpu'])) and (
+                float(obj_job['max_mem']) - alpha >= float(obj_job['min_mem'])):
+            Benefit_vm1 = (float(vm1_specs[4]) - float(obj_job['max_cpu']) + alpha) + (
+                        float(vm1_specs[5]) - float(obj_job['max_mem']) + alpha)
 
         # Calculate VM 2 benefit if all constraints are met
-        if (float(vm2_specs[5]) - float(obj_job['CPU max']) + alpha >= 0) and (
-                float(vm2_specs[6]) - float(obj_job['Mem max']) + alpha >= 0) and (
-                float(vm2_specs[7]) - float(obj_job['Net max']) + alpha >= 0) and (
-                float(obj_job['SSpec']) <= float(vm2_specs[8])) and (
-                float(obj_job['CPU max']) - alpha >= float(obj_job['CPU min'])) and (
-                float(obj_job['Mem max']) - alpha >= float(obj_job['Mem min'])) and (
-                float(obj_job['Net max']) - alpha >= float(obj_job['Net min'])):
-            Benefit_vm2 = (float(vm2_specs[5]) - float(obj_job['CPU max']) + alpha) + (
-                        float(vm2_specs[6]) - float(obj_job['Mem max']) + alpha) + (
-                                      float(vm2_specs[7]) - float(obj_job['Net max']) + alpha)
+        if (float(vm2_specs[4]) - float(obj_job['max_cpu']) + alpha >= 0) and (
+                float(vm2_specs[5]) - float(obj_job['max_mem']) + alpha >= 0) and (
+                float(obj_job['sec_level']) <= float(vm2_specs[6])) and (
+                float(obj_job['max_cpu']) - alpha >= float(obj_job['min_cpu'])) and (
+                float(obj_job['max_mem']) - alpha >= float(obj_job['min_mem'])):
+            Benefit_vm2 = (float(vm2_specs[4]) - float(obj_job['max_cpu']) + alpha) + (
+                        float(vm2_specs[5]) - float(obj_job['max_mem']) + alpha)
 
             # Calculate VM 3 benefit if all constraints are met
-        if (float(vm3_specs[5]) - float(obj_job['CPU max']) + alpha >= 0) and (
-                float(vm3_specs[6]) - float(obj_job['Mem max']) + alpha >= 0) and (
-                float(vm3_specs[7]) - float(obj_job['Net max']) + alpha >= 0) and (
-                float(obj_job['SSpec']) <= float(vm3_specs[8])) and (
-                float(obj_job['CPU max']) - alpha >= float(obj_job['CPU min'])) and (
-                float(obj_job['Mem max']) - alpha >= float(obj_job['Mem min'])) and (
-                float(obj_job['Net max']) - alpha >= float(obj_job['Net min'])):
-            Benefit_vm3 = (float(vm3_specs[5]) - float(obj_job['CPU max']) + alpha) + (
-                        float(vm3_specs[6]) - float(obj_job['Mem max']) + alpha) + (
-                                      float(vm3_specs[7]) - float(obj_job['Net max']) + alpha)
+        if (float(vm3_specs[4]) - float(obj_job['max_cpu']) + alpha >= 0) and (
+                float(vm3_specs[5]) - float(obj_job['max_mem']) + alpha >= 0) and (
+                float(obj_job['sec_level']) <= float(vm3_specs[6])) and (
+                float(obj_job['max_cpu']) - alpha >= float(obj_job['min_cpu'])) and (
+                float(obj_job['max_mem']) - alpha >= float(obj_job['min_mem'])):
+            Benefit_vm3 = (float(vm3_specs[4]) - float(obj_job['max_cpu']) + alpha) + (
+                        float(vm3_specs[5]) - float(obj_job['max_mem']) + alpha)
 
         # Max benefit unchanged. Try with higher incremental reduction factor
         if max(Benefit_vm1, Benefit_vm2, Benefit_vm3) == -1:
-            return assign_job(obj_vm_list, obj_job, alpha + 0.1)
+            return assign_job(obj_vm_list, obj_job, alpha + 0.5)
 
-        # Assignment successful. Return tuple: {1 i.e. successful, VM#, CPU alloc, Mem alloc, Net alloc}
+         # (success, job_num, [VM  # , CPU alloc, Mem alloc, Net alloc, SSpec])
+         # Assignment successful. Return tuple: {1 i.e. successful, [VM#, job_num, CPU alloc, Mem alloc, sec_tramsfer}
         else:
             if Benefit_vm1 == max(Benefit_vm1, Benefit_vm2, Benefit_vm3):
-                return (1, ['VM1', job_num, float(obj_job['CPU max']) - alpha, float(obj_job['Mem max']) - alpha,
-                        float(obj_job['Net max']) - alpha, obj_job['SSpec']])
+                return (1, ['VM1', job_num, float(obj_job['max_cpu']) - alpha, float(obj_job['max_mem']) - alpha, obj_job['sec_transfer']])
             if Benefit_vm2 == max(Benefit_vm1, Benefit_vm2, Benefit_vm3):
-                return (1, ['VM2', job_num, float(obj_job['CPU max']) - alpha, float(obj_job['Mem max']) - alpha,
-                        float(obj_job['Net max']) - alpha, obj_job['SSpec']])
+                return (1, ['VM2', job_num, float(obj_job['max_cpu']) - alpha, float(obj_job['max_mem']) - alpha], obj_job['sec_transfer'])
             else:
-                return (1, ['VM3', job_num, float(obj_job['CPU max']) - alpha, float(obj_job['Mem max']) - alpha,
-                        float(obj_job['Net max']) - alpha, obj_job['SSpec']])
+                return (1, ['VM3', job_num, float(obj_job['max_cpu']) - alpha, float(obj_job['max_mem']) - alpha], obj_job['sec_transfer'])
 
 
 # send a job to an assigned vm
 def send_job(assigned_job, vm_list, source):
-    #vm = assigned_job[0]
-    #destination = vm_list[vm][0]
-    #security = "No"
-    #if assigned_job[5] > 0:
-    #    security = "Yes"
-    #command = "sudo ./sendt 124 " + str(source) + ' ' + str(destination) + ' ' + str(security)
-    #process = subprocess.Popen(command.split(), stdout=subprocess.PIPE)
-    #output, error = process.communicate()
+    vm = assigned_job[0]
+    destination = vm_list[vm][0]
+    security = "No"
+    if assigned_job[5] == "Yes":
+        security = "Yes"
+    command = "sudo ./sendt " + assigned_job[1] + str(source) + ' ' + str(destination) + ' ' + str(security)
+    process = subprocess.Popen(command.split(), stdout=subprocess.PIPE)
+    output, error = process.communicate()
 
     return 1
 
@@ -105,11 +94,9 @@ def update_vm_list(orig_list, aligned_vm, option):
     if option == "sub":
         orig_list[vm][5] = int(orig_list[vm][5]) - aligned_vm[2]
         orig_list[vm][6] = int(orig_list[vm][6]) - aligned_vm[3]
-        orig_list[vm][7] = int(orig_list[vm][7]) - aligned_vm[4]
     elif option == "add":
         orig_list[vm][5] = int(orig_list[vm][5]) + aligned_vm[2]
         orig_list[vm][6] = int(orig_list[vm][6]) + aligned_vm[3]
-        orig_list[vm][7] = int(orig_list[vm][7]) + aligned_vm[4]
     return orig_list
 
 
@@ -172,10 +159,10 @@ def kill_job(job_num, job_list, job_queue, job_timers, send_queue, vm_list):
 
 def main():
     # path is the directory where new jobs are sent
-    job_path = r'C:\Users\mohse\Desktop\Cloud Computing\lab4\test folder\job_folder'
-    user_path = r'C:\Users\mohse\Desktop\Cloud Computing\lab4\test folder\ui_data'
-    admin_req_path = r'C:\Users\mohse\Desktop\Cloud Computing\lab4\test folder\admin_req'
-    admin_ui_path = r'C:\Users\mohse\Desktop\Cloud Computing\lab4\test folder\ui_data'
+    job_path = r'\vars\wwww\html\job_path'
+    user_path = r'\vars\wwww\html\ui_data'
+    admin_req_path = r'\vars\wwww\html\admin_req'
+    admin_ui_path = r'\vars\wwww\html\ui_data'
     job_list = []
     job_queue = []
     send_queue = []
@@ -209,6 +196,7 @@ def main():
         if len(finished_jobs) > 0:
             for x in finished_jobs:
                 jobs_to_kill.append(x)
+            finished_jobs = []
 
         if len(jobs_to_kill) > 0:
             for x in jobs_to_kill:
