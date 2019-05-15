@@ -76,7 +76,7 @@ def assign_job(obj_vm_list, obj_job, job_num, alpha=0):
 
 # send a job to an assigned vm
 def send_job(assigned_job, vm_list, source):
-    destination = vm_list[vm][0]
+    destination = vm_list[assigned_job[0]][0]
 
     #comman = "sudo ./sendt job_number source destination sec_transfer"
     command = "sudo ./sendt " + assigned_job[1] + str(source) + ' ' + str(destination) + ' ' + str(assigned_job[4])
