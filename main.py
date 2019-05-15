@@ -28,9 +28,9 @@ def assign_job(obj_vm_list, obj_job, job_num, alpha=0):
         Benefit_vm2 = -1
         Benefit_vm3 = -1
 
-        vm1_specs = obj_vm_list.get('VM1')
-        vm2_specs = obj_vm_list.get('VM2')
-        vm3_specs = obj_vm_list.get('VM3')
+        vm1_specs = obj_vm_list.get('domaina')
+        vm2_specs = obj_vm_list.get('domainb')
+        vm3_specs = obj_vm_list.get('domainc')
 
         # Calculate VM 1 benefit if all constraints are met
         if (float(vm1_specs[4]) - float(obj_job['max_cpu']) + alpha >= 0) and (
@@ -67,21 +67,19 @@ def assign_job(obj_vm_list, obj_job, job_num, alpha=0):
          # Assignment successful. Return tuple: {1 i.e. successful, [VM#, job_num, CPU alloc, Mem alloc, sec_tramsfer}
         else:
             if Benefit_vm1 == max(Benefit_vm1, Benefit_vm2, Benefit_vm3):
-                return (1, ['VM1', job_num, float(obj_job['max_cpu']) - alpha, float(obj_job['max_mem']) - alpha, obj_job['sec_transfer']])
+                return (1, ['domaina', job_num, float(obj_job['max_cpu']) - alpha, float(obj_job['max_mem']) - alpha, obj_job['sec_transfer']])
             if Benefit_vm2 == max(Benefit_vm1, Benefit_vm2, Benefit_vm3):
-                return (1, ['VM2', job_num, float(obj_job['max_cpu']) - alpha, float(obj_job['max_mem']) - alpha], obj_job['sec_transfer'])
+                return (1, ['domainb', job_num, float(obj_job['max_cpu']) - alpha, float(obj_job['max_mem']) - alpha], obj_job['sec_transfer'])
             else:
-                return (1, ['VM3', job_num, float(obj_job['max_cpu']) - alpha, float(obj_job['max_mem']) - alpha], obj_job['sec_transfer'])
+                return (1, ['domainc', job_num, float(obj_job['max_cpu']) - alpha, float(obj_job['max_mem']) - alpha], obj_job['sec_transfer'])
 
 
 # send a job to an assigned vm
 def send_job(assigned_job, vm_list, source):
     vm = assigned_job[0]
     destination = vm_list[vm][0]
-    security = "No"
-    if assigned_job[5] == "Yes":
-        security = "Yes"
-    command = "sudo ./sendt " + assigned_job[1] + str(source) + ' ' + str(destination) + ' ' + str(security)
+
+    command = "sudo ./sendt " + assigned_job[1] + str(source) + ' ' + str(destination) + ' ' + str(assigned_job[5])
     process = subprocess.Popen(command.split(), stdout=subprocess.PIPE)
     output, error = process.communicate()
 
@@ -160,9 +158,9 @@ def kill_job(job_num, job_list, job_queue, job_timers, send_queue, vm_list):
 def main():
     # path is the directory where new jobs are sent
     job_path = r'\vars\wwww\html\job_path'
-    user_path = r'\vars\wwww\html\user_data'
+    user_path = r'\vars\wwww\html\ui_data'
     admin_req_path = r'\vars\wwww\html\admin_req'
-    admin_ui_path = r'\vars\wwww\html\admin_data'
+    admin_ui_path = r'\vars\wwww\html\ui_data'
     job_list = []
     job_queue = []
     send_queue = []
@@ -173,9 +171,9 @@ def main():
     pass_test = 0
 
 # 'VM1':['host name', 'port', 'CPU cap', 'Mem cap', 'Net cap', 'avail cpu', 'avail mem', 'avail net', 'SSpec']
-    vm_list = {'VM1': ['host name', 'port', '10', '10', '10', '10', '10', '10', '1'],
-               'VM2': ['host name', 'port', '10', '10', '10', '10', '10', '10', '1'],
-               'VM3': ['host name', 'port', '10', '10', '10', '10', '10', '10', '1']}
+    vm_list = {'domaina': ['host name', 'port', '10', '10', '10', '10', '10', '10', '1'],
+               'domainb': ['host name', 'port', '10', '10', '10', '10', '10', '10', '1'],
+               'domainc': ['host name', 'port', '10', '10', '10', '10', '10', '10', '1']}
 
     # collect the files that already exist in this dir
     job_file_list = os.listdir(job_path)
