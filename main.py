@@ -212,7 +212,7 @@ def main():
         # CHECK FOR JOBS IN QUEUE, OTHERWISE CHECK FOR A NEW JOB ###############
         job_hit = ""
         if len(job_queue) > 0:
-            job_hit = job_queue.pop(0)
+            job_hit_queue = job_queue.pop(0)
         else:
             for x in os.listdir(job_path):
                 if x not in job_file_list:
@@ -223,7 +223,10 @@ def main():
         # ASSIGNING A NEW JOB AND SENDING OR QUEUEING IT ########################
         if job_hit != "":
             # pull the data from the job and then assign it to a VM
-            opened_job = read_job(job_hit, job_path)
+            if job_hit_queue:
+                opened_job = read_job(job_hit_queue[0], job_path)
+            else:
+                opened_job = read_job(job_hit, job_path)
             (pass_test, assigned_job) = assign_job(vm_list, opened_job, job_number)
 
             # if a VM meets the job's requirements, send it to a VM
@@ -244,7 +247,7 @@ def main():
                     pass_test = 0
                     comment = "Waiting for bandwidth"
             else:
-                job_queue.append(job_hit)
+                job_queue.append(job_hit, opened_job)
                 comment = "No available resources currently match request. Job queued"
 
         # UPDATE GUIs ####################################################
