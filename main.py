@@ -76,9 +76,9 @@ def assign_job(obj_vm_list, obj_job, job_num, alpha=0):
 
 # send a job to an assigned vm
 def send_job(assigned_job, vm_list, source):
-    vm = assigned_job[0]
     destination = vm_list[vm][0]
 
+    #comman = "sudo ./sendt job_number source destination sec_transfer"
     command = "sudo ./sendt " + assigned_job[1] + str(source) + ' ' + str(destination) + ' ' + str(assigned_job[5])
     process = subprocess.Popen(command.split(), stdout=subprocess.PIPE)
     output, error = process.communicate()
@@ -137,14 +137,14 @@ def kill_job(job_num, job_list, job_queue, job_timers, send_queue, vm_list):
     squeued = True # check if job in send queue
 
     for x in range(0, len(job_list)):
-        if job_list[x][1] == job_num:
+        if int(job_list[x][1]) == int(job_num):
             tmp = job_list.pop(x)
     for x in range(0, len(job_queue)):
-        if job_list[x][1] == job_num:
+        if int(job_list[x][1]) == int(job_num):
             tmp = job_queue.pop(x)
             jqueued = True
     for x in range(0, len(send_queue)):
-        if send_queue[x][1] == job_num:
+        if int(send_queue[x][1]) == int(job_num):
             tmp = send_queue.pop(x)
             squeued = True
 
@@ -255,10 +255,10 @@ def main():
         job_hit = ''
         comment = ''
         pass_test = 0
-        print(job_list)
-        print(job_queue)
-        print(send_queue)
-        input("Press Enter to continue...")
+        # print(job_list)
+        # print(job_queue)
+        # print(send_queue)
+        # input("Press Enter to continue...")
 
 if __name__ == "__main__":
     main()
